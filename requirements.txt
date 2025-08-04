@@ -20,8 +20,6 @@ googleapis-common-protos==1.70.0
 gunicorn==23.0.0
 idna==3.10
 jmespath==1.0.1
-mysql-connector-python==9.4.0
-mysqlclient==2.2.7
 packaging==25.0
 pilkit==3.0
 pillow==11.3.0

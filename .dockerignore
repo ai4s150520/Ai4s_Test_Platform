@@ -1,0 +1,24 @@
+# .dockerignore
+
+# Git files
+.git
+.gitignore
+
+# Secrets and environment files that should not be in the image
+.env
+.env.*
+gcp-credentials.json
+*.pem
+
+# Python artifacts
+__pycache__/
+*.pyc
+
+# Docker-specific files
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Local development environment
+venv/
+db.sqlite3

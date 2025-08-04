@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import os
 from pathlib import Path
 from decouple import config
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -56,7 +57,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'ai4s_online_test.urls'
 
-LOGIN_URL = '/users/login/'
+LOGIN_URL = 'users:login_register'
 LOGIN_REDIRECT_URL = '/dashboard/'
 LOGOUT_REDIRECT_URL = '/'
 PASSWORD_CHANGE_REDIRECT_URL = '/users/profile/'
@@ -84,14 +85,12 @@ WSGI_APPLICATION = 'ai4s_online_test.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'ai4s_online_exam',
-        'USER': 'root',
-        'PASSWORD': '@Shivam2502',
-        'HOST': 'localhost',
-        'PORT': '3306',
-    }
+    'default': dj_database_url.config(
+        # The default value is the DATABASE_URL from your .env file
+        default=config('DATABASE_URL'),
+        # The conn_max_age ensures persistent connections
+        conn_max_age=600
+    )
 }
 
 AUTH_USER_MODEL = 'users.CustomUser'
@@ -135,6 +134,7 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [ BASE_DIR / "static", ]
 
 # This is where collectstatic will put all files for production
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 
 # Media files (User-uploaded content)
