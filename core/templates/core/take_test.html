@@ -1,0 +1,65 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}Taking Exam: {{ test.title }}{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'core/css/take_test_styles.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="exam-container my-5">
+    <div class="exam-header">
+        <h2>{{ test.title }}</h2>
+        <div id="timer" class="timer">Time Left: {{ test.duration_in_minutes }}:00</div>
+    </div>
+
+    <!-- NEW: Progress Bar -->
+    <div class="progress-container">
+        <div class="progress-bar-exam" id="progressBar"></div>
+    </div>
+    
+    <form id="examForm" action="{% url 'core:submit_test' test.id %}" method="POST" class="mt-4">
+        {% csrf_token %}
+        
+        {% for question in questions %}
+        <div class="card mb-4 question-card">
+            <div class="card-header">
+                <strong>Question {{ forloop.counter }} of {{ questions.count }}</strong>
+            </div>
+            <div class="card-body">
+                <p class="card-text">{{ question.text }}</p>
+                <div class="answer-options">
+                    {% for answer in question.answers.all %}
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="question_{{ question.id }}" id="answer_{{ answer.id }}" value="{{ answer.id }}" required>
+                        <label class="form-check-label" for="answer_{{ answer.id }}">{{ answer.text }}</label>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+        <div class="text-center">
+            <button type="button" id="submitBtn" class="btn btn-submit-exam">Submit My Answers</button>
+        </div>
+    </form>
+</div>
+
+<!-- NEW: Confirmation Modal -->
+<div class="modal-backdrop" id="confirmationModalBackdrop">
+    <div class="modal-dialog">
+        <h3>Confirm Submission</h3>
+        <p>Are you sure you want to finish and submit your answers?</p>
+        <div class="modal-actions">
+            <button type="button" class="btn btn-secondary" id="cancelSubmitBtn">Cancel</button>
+            <button type="button" class="btn btn-primary" id="confirmSubmitBtn">Yes, Submit</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'core/js/take_test_script.js' %}"></script>
+{% endblock %}

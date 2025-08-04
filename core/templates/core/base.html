@@ -1,0 +1,174 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}AI4S Online Test Platform{% endblock %}</title>
+
+    <meta name="description" content="{% block meta_description %}AI4S Online Test Platform - SAP Module Assessments and Learning{% endblock %}">
+    
+    <link rel="icon" href="{% static 'core/images/logo.png' %}" type="image/x-icon" />
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Lexend:wght@600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="{% static 'core/css/base_styles.css' %}" />
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div id="preloader">
+        <div class="spinner"></div>
+    </div>
+
+    <div id="page-wrapper">
+        <header class="main-header" id="main-header">
+            <div class="container">
+                <a href="{% url 'core:home' %}" class="logo" aria-label="Go to Home">AI4S
+                   <img src="{% static 'core/images/logo.png' %}" alt="AI4S Platform Logo" class="logo-image">
+                </a>
+
+                <nav class="main-nav" id="main-nav">
+                    <ul class="nav-links">
+                        <li><a href="{% url 'core:home' %}">Home</a></li>
+                        <li><a href="{% url 'core:test_list' %}">Tests</a></li>
+                        {% if request.user.is_staff %}
+                            <li><a href="{% url 'core:create_test' %}">Create Test</a></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+
+                <div class="header-controls">
+                    {% if user.is_authenticated %}
+                        <div class="nav-user-dropdown">
+                            <button id="userMenuButton" class="user-menu-button" aria-label="User Menu">
+                                {% comment %} <img src="{% static 'core/images/default_avatar.png' %}" alt="User Avatar" class="user-avatar-sm"> {% endcomment %}
+                                <span class="username-display">{{ user.username|truncatechars:10 }}</span>
+                                <i class="fas fa-chevron-down dropdown-icon"></i>
+                            </button>
+                            <div id="userMenuDropdown" class="dropdown-content">
+                                
+                                <a href="{% url 'core:dashboard' %}">
+                                    {% if request.user.is_staff %}
+                                        {# But we show a different icon and text for staff #}
+                                        <i class="fas fa-user-shield fa-fw"></i>
+                                        <span>Admin Dashboard</span>
+                                    {% else %}
+                                        {# And different icon and text for students #}
+                                        <i class="fas fa-tachometer-alt fa-fw"></i>
+                                        <span>My Dashboard</span>
+                                    {% endif %}
+                                </a>                                
+                                <a href="{% url 'users:profile' %}"><i class="fas fa-user-edit fa-fw"></i>
+                                    Profile
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <form action="{% url 'users:logout' %}" method="POST" class="dropdown-logout-form">
+                                    {% csrf_token %}
+                                    <button type="submit" class="dropdown-logout-btn">
+                                        <i class="fas fa-sign-out-alt fa-fw"></i>
+                                        <span>Logout</span>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="nav-auth-buttons">
+                            <a href="{% url 'users:login_register' %}" class="btn btn-secondary">Login</a>
+                            <a href="{% url 'users:login_register' %}" class="btn btn-primary">Register</a>
+                        </div>
+                    {% endif %}
+                    
+                    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme" title="Toggle theme">
+                        <i class="fas fa-sun"></i><i class="fas fa-moon"></i>
+                    </button>
+
+                    <button class="hamburger-menu" id="hamburger-menu" aria-controls="mobile-nav-overlay" aria-expanded="false">
+                        <div class="hamburger-box">
+                            <div class="hamburger-inner"></div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </header>
+        <div class="mobile-nav-overlay" id="mobile-nav-overlay">
+            <nav class="mobile-nav">
+                <a href="{% url 'core:home' %}">Home</a>
+                <a href="{% url 'core:test_list' %}">Tests</a>
+                {% if request.user.is_staff %}
+                    <a href="{% url 'core:create_test' %}">Create Test</a>
+                {% endif %}
+                {% if not user.is_authenticated %}
+                    <hr>
+                    <a href="{% url 'users:login_register' %}">Login</a>
+                    <a href="{% url 'users:login_register' %}" class="btn btn-primary">Register</a>
+                {% endif %}
+            </nav>
+        </div>
+  
+        <main class="main-content">
+            {% block content %}{% endblock %}
+        </main>
+        <footer class="main-footer">
+            <div class="container">
+                <div class="footer-grid">
+                    <div class="footer-column">
+                        <h3 class="footer-logo">
+                            <a href="{% url 'core:home' %}" class="logo" aria-label="Go to Home"> AI4S Solutions
+                               <img src="{% static 'core/images/logo.png' %}" alt="AI4S Platform Logo" class="logo-image">
+                            </a>
+                        </h3>
+                        <p>Pioneering the future of AI-driven assessments to empower learning and evaluation globally.</p>
+                        <div class="footer-social">
+                            <a href="#" aria-label="Twitter" title="Twitter"><i class="fab fa-twitter"></i></a>
+                            <a href="#" aria-label="LinkedIn" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                            <a href="#" aria-label="GitHub" title="GitHub"><i class="fab fa-github"></i></a>
+                        </div>
+                    </div>
+                    <div class="footer-column">
+                        <h4 class="footer-title">Platform</h4>
+                        <ul>
+                            <li><a href="{% url 'core:home' %}">Home</a></li>
+                            <li><a href="{% url 'core:test_list' %}">All Tests</a></li>
+                            <li><a href="#">FAQ</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h4 class="footer-title">Company</h4>
+                        <ul>
+                            <li><a href="#">About Us</a></li>
+                            <li><a href="#">Contact</a></li>
+                            <li><a href="#">Privacy Policy</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h4 class="footer-title">Stay Updated</h4>
+                        <form class="newsletter-form">
+                            <div class="form-group">
+                                <input type="email" id="newsletter-email" placeholder="Your Email" required>
+                                <label for="newsletter-email"></label>
+                            </div>
+                            <button type="submit" aria-label="Subscribe" class="btn-subscribe">
+                                <span class="btn-text">Subscribe</span>
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>© {% now "Y" %} AI4S Solutions. All Rights Reserved.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <a href="#" class="back-to-top" id="back-to-top" aria-label="Back to Top" title="Go to top"><i class="fas fa-arrow-up"></i></a>
+
+    <script src="{% static 'core/js/base.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,204 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}Manage: {{ test.title }}{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'core/css/manage_test_styles.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <!-- Main Header for the Management Page -->
+    <div class="manage-header">
+        <div class="header-info">
+            <span class="eyebrow-text">Test Management Dashboard</span>
+            <h1>{{ test.title }}</h1>
+            <div class="header-actions">
+                <a href="{% url 'core:test_detail' test.id %}" class="btn btn-sm btn-outline-light"><i class="fas fa-eye me-1"></i> View as Student</a>
+                {% if request.user.is_staff %}
+                <a href="{% url 'admin:core_test_change' test.id %}" target="_blank" class="btn btn-sm btn-outline-light"><i class="fas fa-cogs me-1"></i> Advanced Edit</a>
+                {% endif %}
+            </div>
+        </div>
+        
+        {% if request.user.is_staff %}
+        <div class="publish-status-widget">
+            <div class="widget-label">
+                <span>Test Status</span>
+                <strong class="status-badge-lg {% if test.status == 'published' %}published{% else %}draft{% endif %}">
+                    {{ test.get_status_display }}
+                </strong>
+            </div>
+            <form action="{% url 'core:toggle_test_status' test.id %}" method="POST" title="Click to publish or unpublish this test">
+                {% csrf_token %}
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" role="switch" id="publishToggle" 
+                           {% if test.status == 'published' %}checked{% endif %} 
+                           onchange="this.form.submit()">
+                    <label class="form-check-label" for="publishToggle">
+                        Publish
+                    </label>
+                </div>
+            </form>
+        </div>
+        {% endif %}
+
+        <div class="test-stats">
+            <div class="stat-item">
+                <span class="stat-value">{{ test.questions.count }}</span>
+                <span class="stat-label">Questions</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-value">{{ test.difficulty|title }}</span>
+                <span class="stat-label">Difficulty</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-value">{{ test.duration_in_minutes }}</span>
+                <span class="stat-label">Mins</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Two-Column Layout -->
+    <div class="manage-layout">
+        <!-- Left Column: List of Existing Questions -->
+        <div class="question-list-panel">
+            <div class="panel-header">
+                <h3>Question Bank</h3>
+                <button class="btn-add-question" id="addQuestionBtn" title="Add a new question manually">
+                    <i class="fas fa-plus"></i> Add New Manually
+                </button>
+            </div>
+            <div class="accordion" id="questionAccordion">
+                {% for question in test.questions.all %}
+                <div class="accordion-item">
+                    <div class="accordion-header" aria-expanded="false" aria-controls="panel{{ forloop.counter }}">
+                        <span class="accordion-title">
+                            <strong>Q{{ forloop.counter }}:</strong> {{ question.text|truncatechars:60 }}
+                        </span>
+                        <div class="action-icons">
+                            <a href="#" class="action-icon edit-icon" title="Edit Question"><i class="fas fa-pencil-alt"></i></a>
+                            <form action="{% url 'core:delete_question' question.id %}" method="POST" class="delete-form">
+                                {% csrf_token %}
+                                <button type="submit" class="action-icon delete-icon" title="Delete Question">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="accordion-body" id="panel{{ forloop.counter }}">
+                        <ul class="answer-list">
+                            {% for answer in question.answers.all %}
+                            <li class="{% if answer.is_correct %}correct-answer{% endif %}">
+                                <i class="fas {% if answer.is_correct %}fa-check-circle text-success{% else %}fa-circle text-secondary{% endif %} me-2"></i>
+                                {{ answer.text }}
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="empty-state">
+                    <i class="fas fa-folder-open"></i>
+                    <p>This test has no questions yet.</p>
+                    <span>Add questions manually or use the bulk upload feature.</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- ########## RIGHT COLUMN WRAPPER ########## -->
+        <div class="right-column-stack">
+            <!-- Panel for Adding ONE Question (hidden by default) -->
+            <div class="form-panel" id="addQuestionPanel">
+                <div class="panel-header">
+                    <h3>Add New Question</h3>
+                </div>
+                <div class="form-content">
+                    <form method="POST" action="{% url 'core:add_question' test.id %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="form-label">Question Text</label>
+                            {{ question_form.text }}
+                        </div>
+                        <hr />
+                        <h6>Answer Options</h6>
+                        <p class="small text-muted">Provide the options below and check the box for the correct one.</p>
+                        {{ answer_formset.management_form }}
+                        <div id="answer-forms-container">
+                            {% for form in answer_formset %}
+                            <div class="answer-form-row">
+                                {{ form.text }}
+                                <div class="form-check form-switch">
+                                    {{ form.is_correct }}
+                                    <label for="{{ form.is_correct.id_for_label }}"></label>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-secondary" id="cancelBtn">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Save Question</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- ########## BULK UPLOAD PANEL (SINGLE, CORRECTED VERSION) ########## -->
+            <div class="form-panel" id="bulkUploadPanel">
+                <div class="panel-header">
+                    <h3><i class="fas fa-file-upload me-2"></i>Bulk Upload Questions</h3>
+                </div>
+                <div class="form-content">
+                    <p class="small text-muted">
+                        Upload a pre-formatted JSON file to add multiple questions at once. 
+                        <a href="#">Download sample format</a>.
+                    </p>
+                    <form action="{% url 'core:bulk_add_questions' test.id %}" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="json_file_upload" class="form-label fw-bold">Select JSON File</label>
+                            <input class="form-control" type="file" id="json_file_upload" name="json_file" accept=".json" required>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-success w-100">
+                                <i class="fas fa-upload"></i> Upload & Save Questions
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!-- ########## END OF BULK UPLOAD PANEL ########## -->
+
+        </div>
+    </div>
+
+    <!-- ########## DELETE TEST FUNCTIONALITY (SUPERUSER ONLY) ########## -->
+    {% if request.user.is_superuser %}
+    <div class="danger-zone">
+        <h4>Danger Zone</h4>
+        <div class="danger-zone-content">
+            <div class="danger-text">
+                <p><strong>Warning:</strong> Deleting this test is a permanent action...</p>
+                <p>This action cannot be undone.</p>
+            </div>
+            <div class="danger-action">
+                <form action="{% url 'core:delete_test' test.id %}" method="POST" id="deleteTestForm">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-exclamation-triangle"></i> Delete This Test Permanently
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    <!-- ########## END OF DELETE TEST FUNCTIONALITY ########## -->
+</div>
+{% endblock %}
+
+
+{% block extra_js %}
+    <script src="{% static 'core/js/manage_test_script.js' %}"></script>
+{% endblock %}

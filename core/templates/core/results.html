@@ -1,0 +1,78 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{# This block overrides the <title> tag in the <head> of base.html #}
+{% block title %}Exam Results: {{ attempt.test.title }}{% endblock %}
+
+
+{# This block is for any page-specific CSS you want to add #}
+{% block extra_css %}
+<style>
+    .results-summary {
+        border: 1px solid #dee2e6;
+        transition: box-shadow 0.3s ease-in-out;
+    }
+    .results-summary:hover {
+        box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+    }
+    .bg-success-light {
+        background-color: #e9f7ef;
+        border-left: 5px solid #198754;
+    }
+    .bg-danger-light {
+        background-color: #fceeee;
+        border-left: 5px solid #dc3545;
+    }
+    .results-summary h1 {
+        font-family: 'Lexend', sans-serif;
+        font-weight: 700;
+    }
+    .results-summary .btn {
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+    }
+</style>
+{% endblock %}
+
+
+{# This is the main content block that will be injected into base.html #}
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="results-summary text-center p-4 p-md-5 rounded shadow-sm 
+                {% if attempt.score >= 75 %} bg-success-light {% else %} bg-danger-light {% endif %}">
+                
+                {# Check if the score is high enough to pass #}
+                {% if attempt.score >= 75 %}
+                    <i class="fas fa-check-circle fa-4x text-success mb-3"></i>
+                    <h1 class="display-4">Congratulations!</h1>
+                    <p class="lead">You passed the test for <strong>{{ attempt.test.title }}</strong>.</p>
+                {% else %}
+                    <i class="fas fa-times-circle fa-4x text-danger mb-3"></i>
+                    <h1 class="display-4">Needs Improvement</h1>
+                    <p class="lead">Don't worry, great things take time. Review and try again!</p>
+                {% endif %}
+
+                <hr class="my-4">
+
+                <h3>Your Score: <span class="text-primary">{{ attempt.score|floatformat:2 }}%</span></h3>
+
+                <div class="mt-4">
+                    <a href="{% url 'core:dashboard' %}" class="btn btn-primary">
+                        <i class="fas fa-tachometer-alt"></i> Go to Dashboard
+                    </a>
+                    <a href="{% url 'core:test_list' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-list"></i> Explore Other Tests
+                    </a>
+                </div>
+            </div>
+
+            {# You can add a detailed answer review section later if needed #}
+            <div class="mt-4 text-center">
+                <p class="text-muted">A detailed question-by-question review can be found on your dashboard.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

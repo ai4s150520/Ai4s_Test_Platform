@@ -1,0 +1,76 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Welcome - AI4S Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'users/css/style.css' %}" />
+</head>
+<body>
+    <div class="auth-container" id="auth-container">
+        <!-- Registration Form -->
+        <div class="form-container sign-up-container">
+            <form action="{% url 'users:login_register' %}" method="POST">
+                {% csrf_token %}
+                <h1>Create Account</h1>
+                <span>or use your email for registration</span>
+                <input type="text" name="username" placeholder="Username" required />
+                <input type="email" name="email" placeholder="Email" required />
+                <div class="password-wrapper">
+                    <input type="password" name="password" placeholder="Password" required id="reg-password"/>
+                    <i class="fas fa-eye password-toggle"></i>
+                </div>
+                <div class="password-wrapper">
+                    <input type="password" name="password2" placeholder="Confirm Password" required id="reg-password2"/>
+                    <i class="fas fa-eye password-toggle"></i>
+                </div>
+                <button type="submit">Register</button>
+            </form>
+        </div>
+        <!-- Login Form -->
+        <div class="form-container sign-in-container">
+            <form action="{% url 'users:login_register' %}" method="POST">
+                {% csrf_token %}
+                <h1>Sign In</h1>
+                <span>or use your account</span>
+                <input type="text" name="identifier" placeholder="Username or Email" required />
+                <div class="password-wrapper">
+                    <input type="password" name="password" placeholder="Password" required id="login-password"/>
+                    <i class="fas fa-eye password-toggle"></i>
+                </div>
+                <a href="#">Forgot your password?</a>
+                <button type="submit">Sign In</button>
+            </form>
+        </div>
+        <!-- Overlay for Toggling -->
+        <div class="overlay-container">
+            <div class="overlay">
+                <div class="overlay-panel overlay-left">
+                    <h1>Welcome Back!</h1>
+                    <p>To keep connected with us please login with your personal info</p>
+                    <button class="ghost" id="signIn">Sign In</button>
+                </div>
+                <div class="overlay-panel overlay-right">
+                    <h1>Hello, Friend!</h1>
+                    <p>Enter your personal details and start your journey with us</p>
+                    <button class="ghost" id="signUp">Register</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Django Messages Display -->
+    {% if messages %}
+    <div class="messages-container">
+        {% for message in messages %}
+            <div class="message {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <script src="{% static 'users/js/main.js' %}"></script>
+</body>
+</html>

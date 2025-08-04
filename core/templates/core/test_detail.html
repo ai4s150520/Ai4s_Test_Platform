@@ -1,0 +1,53 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}{{ test.title }} - Details{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'core/css/test_detail_styles.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="test-detail-layout">
+        <!-- Left Column: Test Information -->
+        <main class="test-detail-main">
+            <span class="eyebrow-text">{{ test.category.name }}</span>
+            <h1>{{ test.title }}</h1>
+            <p class="lead text-muted">{{ test.description }}</p>
+            <hr>
+            <section>
+                <h3>What You'll Be Assessed On</h3>
+                <ul class="topics-list">
+                    <li><i class="fas fa-check-circle"></i> Core Financial Concepts</li>
+                    <li><i class="fas fa-check-circle"></i> General Ledger and Asset Accounting</li>
+                    <li><i class="fas fa-check-circle"></i> Controlling and Cost Center Management</li>
+                    <li><i class="fas fa-check-circle"></i> And more...</li>
+                </ul>
+            </section>
+        </main>
+        
+        <!-- Right Column: Action Card -->
+        <aside class="test-detail-sidebar">
+            <div class="action-card">
+                {% if test.image %}
+                    <img src="{{ test.image.url }}" alt="" class="action-card-img">
+                {% endif %}
+                <h3>Ready to Start?</h3>
+                <ul class="info-list">
+                    <li><i class="fas fa-list-ol"></i> <strong>Questions:</strong> {{ test.number_of_questions }}</li>
+                    <li><i class="fas fa-stopwatch"></i> <strong>Duration:</strong> {{ test.duration_in_minutes }} Minutes</li>
+                    <li><i class="fas fa-graduation-cap"></i> <strong>Difficulty:</strong> {{ test.get_difficulty_display }}</li>
+                    <li><i class="fas fa-check-double"></i> <strong>Passing Score:</strong> 75%</li>
+                </ul>
+                <div class="d-grid">
+                    {# This link now goes to the actual test-taking page #}
+                    <a href="{% url 'core:take_test' test.id %}" class="btn btn-start-test">
+                        <i class="fas fa-play-circle"></i> Start Assessment Now
+                    </a>
+                </div>
+            </div>
+        </aside>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,124 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}Administrator Dashboard{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'core/css/admin_dashboard_styles.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="page-header-section">
+    <div class="container">
+        <h1>Administrator Dashboard</h1>
+        <p class="lead">An overview of all platform activity and management tools.</p>
+    </div>
+</section>
+
+<section class="dashboard-content py-5">
+    <div class="container">
+        <!-- Stat Cards -->
+        <div class="row mb-4">
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="stat-card h-100">
+                    <div class="stat-icon students"><i class="fas fa-users"></i></div>
+                    <div class="stat-info">
+                        <span class="stat-value">{{ student_count }}</span>
+                        <span class="stat-label">Total Students</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="stat-card h-100">
+                    <div class="stat-icon tests"><i class="fas fa-file-alt"></i></div>
+                    <div class="stat-info">
+                        <span class="stat-value">{{ test_count }}</span>
+                        <span class="stat-label">Total Tests</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="stat-card h-100">
+                    <div class="stat-icon attempts"><i class="fas fa-check-circle"></i></div>
+                    <div class="stat-info">
+                        <span class="stat-value">{{ total_attempts_count }}</span>
+                        <span class="stat-label">Total Attempts</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="quick-actions-card h-100">
+                    <h4>Quick Actions</h4>
+                    <a href="{% url 'core:create_test' %}" class="btn btn-primary w-100 mb-2">Create New Test</a>
+                    <a href="{% url 'admin:core_category_changelist' %}" target="_blank" class="btn btn-secondary w-100">Manage Categories</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chart for Recent Activity -->
+        <div class="card shadow-sm mb-5">
+            <div class="card-header">
+                <h3>Test Activity (Last 7 Days)</h3>
+            </div>
+            <div class="card-body">
+                <canvas id="activityChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Recent Attempts Table with Search -->
+        <div class="card shadow-sm">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h3>Recent User Activity</h3>
+                <div class="table-search">
+                    <input type="text" id="activitySearch" class="form-control" placeholder="Search activity...">
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0" id="activityTable">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col">Student</th>
+                            <th scope="col">Test Module</th>
+                            <th scope="col">Score</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Date Taken</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for attempt in recent_attempts %}
+                        <tr>
+                            <td><strong>{{ attempt.user.username }}</strong></td>
+                            <td>{{ attempt.test.title }}</td>
+                            <td>{{ attempt.score|floatformat:2 }}%</td>
+                            <td>
+                                {% if attempt.score >= 75 %}
+                                    <span class="badge bg-success">Passed</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Failed</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ attempt.completed_at|date:"F d, Y, P" }}</td>
+                            <td>
+                                <a href="{% url 'core:results' attempt.id %}" class="btn btn-sm btn-outline-primary">View Result</a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr id="no-activity-row">
+                            <td colspan="6" class="text-center py-4">There has been no test activity yet.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+    <!-- Chart.js library for the activity chart -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom JS for the dashboard -->
+    <script src="{% static 'core/js/admin_dashboard_script.js' %}"></script>
+{% endblock %}

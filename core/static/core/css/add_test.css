@@ -1,0 +1,163 @@
+.wizard-container {
+    max-width: 650px;
+    margin: 2rem auto;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 2rem 2.5rem;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e0e0e0;
+}
+
+.wizard-container h2 {
+    font-family: 'Lexend', sans-serif;
+    color: #333;
+}
+
+/* Progress Bar */
+.progress-bar {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    margin: 2.5rem 0;
+}
+
+.progress-bar::before,
+.progress {
+    content: "";
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 4px;
+    width: 100%;
+    background-color: #dcdcdc;
+    z-index: 1;
+}
+
+.progress {
+    background-color: #007bff;
+    width: 0%;
+    transition: 0.3s;
+}
+
+.progress-step {
+    width: 35px;
+    height: 35px;
+    background-color: #dcdcdc;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2;
+    transition: all 0.4s ease;
+    position: relative;
+}
+
+.progress-step::after {
+    content: attr(data-title);
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.progress-step-active {
+    background-color: #007bff;
+    color: #fff;
+    transform: scale(1.1);
+    border: 2px solid #007bff;
+}
+
+/* Form Steps */
+.form-step {
+    display: none;
+    animation: fadeIn 0.5s;
+}
+
+.form-step-active {
+    display: block;
+}
+
+.step-title {
+    font-family: 'Lexend', sans-serif;
+    color: #007bff;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 0.5rem;
+    margin-bottom: 2rem;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Form inputs styling from your TestCreateForm */
+.form-step input[type="text"],
+.form-step input[type="number"],
+.form-step textarea,
+.form-step select,
+.form-step input[type="file"] {
+    display: block;
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.form-step input:focus,
+.form-step select:focus,
+.form-step textarea:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}
+
+.input-error {
+    border-color: #dc3545 !important;
+}
+
+/* Buttons */
+.btns-group {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    margin-top: 2.5rem;
+}
+
+.btn {
+    padding: 0.75rem;
+    display: block;
+    text-decoration: none;
+    background-color: #007bff;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    cursor: pointer;
+    border: 1px solid #007bff;
+    transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
+    font-weight: 600;
+}
+
+.btn:hover {
+    background-color: #0056b3;
+    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+.btn-prev {
+    background-color: #fff;
+    color: #666;
+    border-color: #ccc;
+}
+.btn-prev:hover {
+    background-color: #e9ecef;
+    box-shadow: none;
+    transform: none;
+}

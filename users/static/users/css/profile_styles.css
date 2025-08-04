@@ -1,0 +1,238 @@
+/* static/core/css/profile_styles.css */
+
+:root {
+    --primary-color: #007bff;
+    --danger-color: #dc3545;
+    --danger-bg: #f8d7da;
+    --card-bg: #ffffff;
+    --bg-light: #f8f9fa;
+    --shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+    --border-color: #e9ecef;
+}
+
+.profile-page-container {
+    max-width: 1100px;
+    margin: 20px auto;
+    padding: 20px;
+}
+
+.page-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.page-header h1 {
+    font-size: 2.5rem;
+}
+
+.page-header p {
+    color: #6c757d;
+}
+
+.profile-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 30px;
+}
+
+/* Sidebar (Left Column) */
+.profile-sidebar {
+    background: var(--card-bg);
+    border-radius: 10px;
+    padding: 30px;
+    text-align: center;
+    box-shadow: var(--shadow);
+    align-self: start;
+    /* Sticks to the top in grid */
+}
+
+.profile-avatar-wrapper {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 20px;
+}
+
+#avatarPreview {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid var(--primary-color);
+}
+
+.avatar-upload-label {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    background: #343a40;
+    color: white;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.avatar-upload-label:hover {
+    background: var(--primary-color);
+}
+
+.profile-sidebar h2 {
+    margin-bottom: 5px;
+}
+
+.profile-sidebar p {
+    color: #6c757d;
+    margin-top: 0;
+}
+
+.profile-sidebar .btn {
+    display: block;
+    width: 84%;
+    margin-top: 20px;
+}
+
+/* Main Content (Right Column) */
+.profile-main {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.profile-card {
+    background: var(--card-bg);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+}
+
+.card-header {
+    padding: 20px 25px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+.card-body {
+    padding: 25px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="password"] {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.form-group small {
+    display: block;
+    margin-top: 5px;
+    color: #6c757d;
+    font-size: 0.85rem;
+}
+
+.btn {
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    cursor: pointer;
+    border: 1px solid transparent;
+    font-weight: 600;
+    text-align: center;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: white;
+}
+
+.btn-secondary {
+    background: var(--bg-light);
+    color: #333;
+    border-color: #ccc;
+}
+
+.btn-danger {
+    background: var(--danger-color);
+    color: white;
+}
+
+.btn-sm {
+    padding: 8px 15px;
+    font-size: 0.9rem;
+}
+
+.danger-zone {
+    border: 2px solid var(--danger-bg);
+}
+
+.danger-zone .card-header {
+    background: var(--danger-bg);
+}
+
+/* Deletion Confirmation Modal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: none;
+    /* Changed by JS */
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background: white;
+    padding: 40px;
+    border-radius: 10px;
+    text-align: center;
+    width: 90%;
+    max-width: 450px;
+}
+
+.modal-icon {
+    font-size: 3.5rem;
+    color: var(--danger-color);
+    margin-bottom: 20px;
+}
+
+.modal-actions {
+    margin-top: 30px;
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+/* Responsive Grid for Desktop */
+@media (min-width: 992px) {
+    .profile-grid {
+        grid-template-columns: 300px 1fr;
+    }
+}

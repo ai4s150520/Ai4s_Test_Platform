@@ -1,0 +1,133 @@
+{% extends "core/base.html" %} {% load static %} {% block title %}Explore Our
+SAP Assessments{% endblock %} {% block extra_css %}
+<link rel="stylesheet" href="{% static 'core/css/test_list_styles.css' %}" />
+{% endblock %} {% block content %}
+<section class="page-header-section">
+  <div class="container">
+    <h1>Explore Our SAP Assessments</h1>
+    <p class="lead">
+      Find the perfect test to validate your skills and advance your career.
+    </p>
+  </div>
+</section>
+
+<!-- Filters & Search Section -->
+<section class="filter-section py-4">
+  <div class="container">
+    <div class="filter-controls">
+      <div class="search-bar">
+        <i class="fas fa-search"></i>
+        <input
+          type="text"
+          id="test-search-input"
+          placeholder="Search for a test by name..."
+        />
+      </div>
+      <div class="filter-dropdowns">
+        <select id="category-filter" aria-label="Filter by Category">
+          <option value="all">All Categories</option>
+          {% for category in categories %}
+          <option value="{{ category.slug|lower }}">{{ category.name }}</option>
+          {% endfor %}
+        </select>
+        <select id="difficulty-filter" aria-label="Filter by Difficulty">
+          <option value="all">All Difficulties</option>
+          <option value="beginner">Beginner</option>
+          <option value="intermediate">Intermediate</option>
+          <option value="expert">Expert</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="test-list-section py-5">
+  <div class="container">
+    <div class="row" id="test-grid">
+      {% for test in tests %}
+      <div
+        class="col-lg-4 col-md-6 mb-4 test-card-wrapper"
+        data-title="{{ test.title|lower }}"
+        data-category="{{ test.category.slug|lower }}"
+        data-difficulty="{{ test.difficulty|lower }}"
+      >
+        <div class="test-card">
+          <div class="card-image-container">
+            <img
+              src="{% if test.image %}{{ test.image.url }}?v={{ test.updated_at.timestamp }}{% else %}{% static 'core/images/default_test_image.png' %}{% endif %}"
+              alt="{{ test.title }} Module Image"
+            />
+
+            {% if test.status == 'draft' and request.user.is_staff %}
+            <div class="status-badge draft-badge">Draft</div>
+            {% endif %}
+
+            <div class="difficulty-badge {{ test.difficulty }}">
+              {{ test.get_difficulty_display }}
+            </div>
+          </div>
+          <div class="card-content">
+            <span class="card-category">{{ test.category.name }}</span>
+            <h5 class="card-title">{{ test.title }}</h5>
+            <p class="card-description">
+              {{ test.description|truncatewords:20 }}
+            </p>
+            <div class="card-meta">
+              <span class="meta-item"
+                ><i class="fas fa-list-ol"></i> {{ test.number_of_questions }}
+                Questions</span
+              >
+              <span class="meta-item"
+                ><i class="far fa-clock"></i> {{ test.duration_in_minutes }}
+                min</span
+              >
+            </div>
+          </div>
+          <div class="card-footer">
+            {% if request.user.is_staff %}
+            <a
+              href="{% url 'core:manage_test' test.id %}"
+              class="btn btn-manage-details"
+            >
+              Manage Test <i class="fas fa-edit"></i>
+            </a>
+            {% else %}
+            <a
+              href="{% url 'core:test_detail' test.id %}"
+              class="btn btn-view-details"
+            >
+              View Details <i class="fas fa-arrow-right"></i>
+            </a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      {# THIS IS THE CORRECTED PART #} {% empty %}
+      <div class="col-12">
+        <div class="empty-state-card text-center">
+          <h3>Ready for a Challenge?</h3>
+          <p>
+            No published assessments are available right now. Please check back
+            later!
+          </p>
+        </div>
+      </div>
+      {% endfor %}
+
+      <div
+        id="no-results-message"
+        class="col-12 text-center"
+        style="display: none"
+      >
+        <div class="empty-state-card">
+          <h3>No Tests Found</h3>
+          <p>Try adjusting your search or filter criteria.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %} {% block extra_js %}
+<script src="{% static 'core/js/test_list_filter.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,113 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}Dashboard - AI4S Platform{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'core/css/dashboard.css' %}" />
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+  <div class="dashboard-header">
+    <h1>Welcome back, {{ user.username }}!</h1>
+    <p>Here's a snapshot of your progress. Keep up the great work!</p>
+  </div>
+
+  <section class="stat-cards">
+    <div class="stat-card">
+      <div class="card-icon tests"><i class="fas fa-file-alt"></i></div>
+      <div class="card-info">
+        <span class="card-value">{{ total_attempts }}</span>
+        <span class="card-label">Tests Taken</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="card-icon average"><i class="fas fa-chart-line"></i></div>
+      <div class="card-info">
+        <span class="card-value">82%</span>
+        <span class="card-label">Average Score</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="card-icon highest"><i class="fas fa-trophy"></i></div>
+      <div class="card-info">
+        <span class="card-value">98%</span>
+        <span class="card-label">Highest Score</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="dashboard-main-grid">
+    <div class="dashboard-left">
+      <section class="card">
+        <h2>Performance Overview</h2>
+        <div class="chart-container"><canvas id="performanceChart"></canvas></div>
+      </section>
+
+      <section class="card">
+        <h2>Recent Activity</h2>
+        <ul class="recent-activity-list">
+          {% for attempt in attempts %}
+          <li>
+            <div class="activity-info">
+              <strong>{{ attempt.test.title }}</strong>
+              <small>{{ attempt.start_time|date:"F d, Y" }}</small>
+            </div>
+            <div class="activity-details">
+              <span class="score-badge
+                {% if attempt.score >= 80 %}score-high
+                {% elif attempt.score >= 60 %}score-medium
+                {% else %}score-low{% endif %}
+              ">
+                {{ attempt.score }}%
+              </span>
+              <a href="{% url 'core:results' attempt.id %}" class="btn-view-result">View Result</a>
+            </div>
+          </li>
+          {% empty %}
+          <p>You have not taken any tests yet. Pick one from the list to get started!</p>
+          {% endfor %}
+        </ul>
+      </section>
+    </div>
+
+    <div class="dashboard-right">
+      <section class="card">
+        <h2>Available Tests</h2>
+        <div class="search-container">
+          <i class="fas fa-search"></i>
+          <input type="text" id="test-search-input" placeholder="Search for a test..." />
+        </div>
+        <ul id="available-tests-list" class="available-tests-list">
+          {% for test in tests %}
+          <li class="test-item">
+            <div class="test-icon"><i class="fas fa-vial"></i></div>
+            <div class="test-info">
+              <strong>{{ test.title }}</strong>
+              <span>Category: {{ test.category }}</span>
+            </div>
+            <a href="{% url 'core:test_detail' test.id %}" class="btn-start-test" title="View Details for {{ test.title }}">
+              <i class="fas fa-play"></i>
+            </a>
+            {% if user.is_authenticated and user.is_staff %} <!-- or whatever permission you choose -->
+              <li><a href="{% url 'core:create_test' %}">Create Test</a></li>
+            {% endif %}
+          </li>
+          {% empty %}
+          <li>No tests currently available.</li>
+          {% endfor %}
+        </ul>
+      </section>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const attemptLabels = JSON.parse('{{ attempt_labels|safe|default:"[]" }}');
+  const attemptScores = JSON.parse('{{ attempt_scores|safe|default:"[]" }}');
+</script>
+<script src="{% static 'core/js/dashboard.js' %}"></script>
+{% endblock %}

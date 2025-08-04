@@ -1,0 +1,139 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}Home - Welcome to AI4S Online Test Platform{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'core/css/home.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="hero-content">
+            <h1 class="hero-title animate-on-scroll">Master SAP with AI-Powered Assessments</h1>
+            <p class="hero-subtitle animate-on-scroll delay-1">
+                Validate your skills, identify knowledge gaps, and accelerate your career with our industry-leading online test platform.
+            </p>
+            <div class="hero-cta animate-on-scroll delay-2">
+                <a href="{% url 'core:test_list' %}" class="btn btn-primary btn-lg">Explore Tests</a>
+                {% comment %} <a href="#" class="btn btn-secondary btn-lg">Learn More</a> {% endcomment %}
+            </div>
+        </div>
+        <div class="hero-image animate-on-scroll delay-3">
+            <img src="{% static 'core/images/AI_Assessment_Illustration.png' %}" alt="AI Assessment Illustration">
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Why Choose AI4S Platform?</h2>
+            <p class="section-subtitle">A comprehensive platform designed for excellence.</p>
+        </div>
+        <div class="features-grid">
+            <!-- Feature 1 -->
+            <div class="feature-card animate-on-scroll">
+                <div class="feature-icon">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <h3 class="feature-title">AI-Powered Analysis</h3>
+                <p class="feature-description">Get instant, detailed feedback and performance analysis powered by advanced AI algorithms.</p>
+            </div>
+            <!-- Feature 2 -->
+            <div class="feature-card animate-on-scroll delay-1">
+                <div class="feature-icon">
+                    <i class="fas fa-laptop-code"></i>
+                </div>
+                <h3 class="feature-title">Real-World Scenarios</h3>
+                <p class="feature-description">Our tests simulate real-world challenges, ensuring you're prepared for on-the-job scenarios.</p>
+            </div>
+            <!-- Feature 3 -->
+            <div class="feature-card animate-on-scroll delay-2">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3 class="feature-title">Track Your Progress</h3>
+                <p class="feature-description">Monitor your development over time with an intuitive dashboard and progress-tracking tools.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- "How It Works" Section -->
+<section class="how-it-works-section">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Get Started in 3 Simple Steps</h2>
+        </div>
+        <div class="steps-container">
+            <!-- Step 1 -->
+            <div class="step-card animate-on-scroll">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h3 class="step-title">Register</h3>
+                    <p>Create your free account to get started.</p>
+                </div>
+            </div>
+            <div class="step-connector"></div>
+            <!-- Step 2 -->
+            <div class="step-card animate-on-scroll delay-1">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h3 class="step-title">Choose a Test</h3>
+                    <p>Browse our extensive library of SAP module tests.</p>
+                </div>
+            </div>
+            <div class="step-connector"></div>
+            <!-- Step 3 -->
+            <div class="step-card animate-on-scroll delay-2">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h3 class="step-title">Achieve Mastery</h3>
+                    <p>Take tests, review results, and master your skills.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+{% comment %} <section class="testimonials-section">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">What Our Users Say</h2>
+        </div>
+        <div class="testimonial-slider">
+            <!-- Testimonial 1 -->
+            <div class="testimonial-card animate-on-scroll">
+                <p class="testimonial-text">"The AI4S platform was a game-changer for my career prep. The detailed feedback helped me focus on my weak areas and land my dream job!"</p>
+                <div class="testimonial-author">
+                    <img src="{% static 'core/images/Avatar1.webp' %}" alt="User Avatar" class="author-avatar">
+                    <div class="author-info">
+                        <h4 class="author-name">Saurabh Mishra</h4>
+                        <p class="author-title">CEO at AI4S</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Testimonial 2 -->
+            <div class="testimonial-card animate-on-scroll delay-1">
+                <p class="testimonial-text">"Incredibly well-designed tests that mirror the complexity of real-world SAP environments. Highly recommended."</p>
+                <div class="testimonial-author">
+                    <img src="{% static 'core/images/Avatar2.webp' %}" alt="User Avatar" class="author-avatar">
+                    <div class="author-info">
+                        <h4 class="author-name"> Pandey</h4>
+                        <p class="author-title">Senior Developer</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section> {% endcomment %}
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'core/js/home.js' %}"></script>
+{% endblock %}

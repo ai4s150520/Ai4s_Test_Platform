@@ -1,0 +1,71 @@
+/* static/core/css/admin_dashboard_styles.css */
+
+/* --- Stat Cards --- */
+.stat-card, .quick-actions-card {
+    background: var(--surface-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    border: 1px solid var(--border-color);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.stat-card:hover, .quick-actions-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+.stat-card { display: flex; align-items: center; gap: 1.5rem; }
+.stat-icon {
+    font-size: 2rem; width: 60px; height: 60px;
+    border-radius: 50%; display: flex;
+    justify-content: center; align-items: center;
+    color: #fff;
+}
+.stat-icon.students { background: #0d6efd; }
+.stat-icon.tests { background: #6f42c1; }
+.stat-icon.attempts { background: #198754; }
+.stat-info .stat-value {
+    font-size: 2.2rem; font-weight: 700;
+    font-family: var(--font-secondary); color: var(--text-color);
+    display: block; line-height: 1;
+}
+.stat-info .stat-label { font-size: 1rem; color: var(--text-muted); }
+
+/* --- Quick Actions Card --- */
+.quick-actions-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.quick-actions-card h4 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-family: var(--font-secondary);
+}
+
+/* --- Table Search --- */
+.table-search input {
+    max-width: 250px;
+    background-color: var(--background-color);
+    border-color: var(--border-color);
+    color: var(--text-color);
+}
+.table-search input:focus {
+    background-color: var(--surface-color);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* --- Responsiveness for Header --- */
+@media (max-width: 767.98px) {
+    .card-header.d-flex {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 1rem;
+    }
+    .table-search {
+        width: 100%;
+    }
+    .table-search input {
+        max-width: none;
+    }
+}
