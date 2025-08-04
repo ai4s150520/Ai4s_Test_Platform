@@ -1,6 +1,6 @@
 # AI4S Online Test Platform
 
-![Platform Showcase](https://via.placeholder.com/1200x400.png?text=AI4S+Platform+Showcase)
+
 <!-- Replace the placeholder URL above with a real screenshot of your application's homepage -->
 
 A robust, full-stack web application designed for creating, managing, and taking online assessments, with a primary focus on SAP modules. This platform provides a seamless, role-based experience for students and administrators, featuring a modern UI, a secure backend, and a professional-grade feature set.
