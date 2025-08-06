@@ -1,0 +1,43 @@
+# Dockerfile.prod
+
+# --- Build Stage ---
+# This stage installs dependencies and builds static files.
+FROM python:3.11-slim as builder
+
+WORKDIR /app
+
+# Install system dependencies needed for building
+RUN apt-get update && apt-get install -y --no-install-recommends gcc libpq-dev
+
+# Install Python dependencies
+COPY requirements.txt /app/
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy application code
+COPY . /app/
+
+# Run collectstatic. This uses the GS_BUCKET_NAME from our settings.
+# We need to provide dummy secrets and a path to a dummy credentials file for this command to run during build.
+RUN SECRET_KEY=dummy \
+    GS_BUCKET_NAME=dummy \
+    GOOGLE_APPLICATION_CREDENTIALS=/app/dummy_creds.json \
+    python manage.py collectstatic --no-input
+
+# --- Final Stage ---
+# This stage creates the final, smaller image to run.
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Install only the runtime system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends libpq-dev && rm -rf /var/lib/apt/lists/*
+
+# Copy installed Python packages from the builder stage
+COPY --from=builder /usr/local/lib/python3.11/site-packages/ /usr/local/lib/python3.11/site-packages/
+
+# Copy the application code
+COPY . /app/
+
+# Gunicorn will be run by Cloud Run's default command.
+# We just need to expose the port.
+EXPOSE 8000
