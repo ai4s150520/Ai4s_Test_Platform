@@ -87,11 +87,19 @@ WSGI_APPLICATION = 'ai4s_online_test.wsgi.application'
 DATABASES = {
     'default': dj_database_url.config(
         # The default value is the DATABASE_URL from your .env file
-        default=config('DATABASE_URL'),
+        default=config('DATABASE_URL="postgres://postgres:Welcome@123#@/postgres?host=/cloudsql/sap-test-program:asia-south1:ai4s-db"
+ '),
         # The conn_max_age ensures persistent connections
         conn_max_age=600
     )
 }
+
+if not DATABASES['default'].get('ENGINE'):
+    DATABASES['default'] = {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': ':memory:', # An in-memory database that exists only for the command's life.
+    }
+
 
 AUTH_USER_MODEL = 'users.CustomUser'
 
