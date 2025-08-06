@@ -13,6 +13,7 @@ import os
 from pathlib import Path
 from decouple import config
 import dj_database_url
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -88,23 +89,22 @@ DATABASE_URL_FROM_ENV = config('DATABASE_URL', default='')
 
 DATABASES = {
     'default': dj_database_url.config(
-<<<<<<< HEAD
-        # Pass the URL we read from the environment to dj_database_url.
+        # Pass the variable we just read to dj_database_url.
         default=DATABASE_URL_FROM_ENV,
-=======
-        # The default value is the DATABASE_URL from your .env file
-        default=config('DATABASE_URL="postgres://postgres:Welcome@123#@/postgres?host=/cloudsql/sap-test-program:asia-south1:ai4s-db"
- '),
-        # The conn_max_age ensures persistent connections
->>>>>>> 427790268ec87025372728d58632bb78179a4080
         conn_max_age=600
     )
 }
 
+# --- SAFETY NET FOR BUILD PROCESS ---
+# This `if` block is a safety measure. If DATABASE_URL was not found in the environment,
+# the 'default' database config will be empty. This block provides a minimal
+# "dummy" database engine so Django can load its settings for commands like
+# `collectstatic` without needing a real database.
 if not DATABASES['default'].get('ENGINE'):
+    # --- THIS IS THE CORRECTED LINE ---
     DATABASES['default'] = {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': ':memory:', # An in-memory database that exists only for the command's life.
+        'NAME': ':memory:',
     }
 
 
