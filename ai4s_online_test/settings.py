@@ -88,8 +88,15 @@ DATABASE_URL_FROM_ENV = config('DATABASE_URL', default='')
 
 DATABASES = {
     'default': dj_database_url.config(
+<<<<<<< HEAD
         # Pass the URL we read from the environment to dj_database_url.
         default=DATABASE_URL_FROM_ENV,
+=======
+        # The default value is the DATABASE_URL from your .env file
+        default=config('DATABASE_URL="postgres://postgres:Welcome@123#@/postgres?host=/cloudsql/sap-test-program:asia-south1:ai4s-db"
+ '),
+        # The conn_max_age ensures persistent connections
+>>>>>>> 427790268ec87025372728d58632bb78179a4080
         conn_max_age=600
     )
 }
