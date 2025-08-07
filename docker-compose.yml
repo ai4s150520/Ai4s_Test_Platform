@@ -1,12 +1,12 @@
-# docker-compose.yml (For Local Development ONLY)
+# docker-compose.yml (Final Version for Local Development)
 
 services:
+  # --- Django Application Service ("web") ---
   web:
     build:
       context: .
-      dockerfile: Dockerfile # Use the main Dockerfile for local dev
+      dockerfile: Dockerfile # Explicitly use the main Dockerfile for local dev
     container_name: django_web_app
-    # The command to run in development. Gunicorn will listen on port 8000.
     command: gunicorn ai4s_online_test.wsgi:application --bind 0.0.0.0:8000 --workers 4
     volumes:
       - .:/app # Mount local code for instant changes
@@ -19,18 +19,23 @@ services:
     depends_on:
       - db
 
+  # --- PostgreSQL Database Service ("db") ---
   db:
     image: postgres:15
     container_name: postgres_database
     volumes:
       - postgres_data:/var/lib/postgresql/data/
+    # This now uses the official environment variable names for the postgres image
     environment:
-      - POSTGRES_DB=ai4s_db
-      - POSTGRES_USER=ai4s_user
-      - POSTGRES_PASSWORD=a_strong_password_for_db
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     env_file:
       - ./.env.dev
+    ports:
+      - "5432:5432"
 
+  # --- Nginx Web Server Service ("nginx") ---
   nginx:
     image: nginx:1.25
     container_name: nginx_web_server
@@ -43,6 +48,7 @@ services:
     depends_on:
       - web
 
+# Define the named volumes to persist data.
 volumes:
   postgres_data:
   static_volume:

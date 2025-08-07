@@ -22,5 +22,10 @@ echo "PostgreSQL is up and running."
 echo "Applying database migrations..."
 python manage.py migrate --noinput
 
+# This is a useful addition for local development
+echo "Collecting static files for Nginx..."
+python manage.py collectstatic --noinput --clear
+
 # Execute the main command passed to the script (e.g., the gunicorn command from docker-compose)
+echo "Starting Gunicorn server..."
 exec "$@"
