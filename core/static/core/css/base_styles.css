@@ -23,7 +23,7 @@ html[data-theme='dark'] {
 
 
 body {
-    background-color: var(--background-color);
+    background-color: #232b3a;
     color: var(--text-color);
     font-family: var(--font-primary);
     transition: background-color 0.3s, color 0.3s;
