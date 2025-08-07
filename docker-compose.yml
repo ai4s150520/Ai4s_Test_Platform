@@ -1,21 +1,24 @@
-# docker-compose.yml (Final Version for Local Development)
 
 services:
   # --- Django Application Service ("web") ---
   web:
-    build:
-      context: .
-      dockerfile: Dockerfile # Explicitly use the main Dockerfile for local dev
+    build: .
     container_name: django_web_app
     command: gunicorn ai4s_online_test.wsgi:application --bind 0.0.0.0:8000 --workers 4
     volumes:
-      - .:/app # Mount local code for instant changes
+      - .:/app
       - static_volume:/app/staticfiles
       - media_volume:/app/media
     expose:
       - 8000
-    env_file:
-      - ./.env.dev
+    # --- THIS IS THE FIX ---
+    # We define the environment variables directly here, removing the need for .env.dev.
+    environment:
+      - SECRET_KEY=django-insecure-a-local-dev-secret-key
+      - DEBUG=1
+      - ALLOWED_HOSTS=localhost,127.0.0.1
+      # This URL now uses the hardcoded credentials from the 'db' service below.
+      - DATABASE_URL=postgres://ai4s_user:a_strong_password_for_db@db:5432/ai4s_db
     depends_on:
       - db
 
@@ -25,15 +28,12 @@ services:
     container_name: postgres_database
     volumes:
       - postgres_data:/var/lib/postgresql/data/
-    # This now uses the official environment variable names for the postgres image
+    # --- THIS IS THE CRITICAL FIX ---
+    # We are setting the database credentials directly for the PostgreSQL container.
     environment:
-      - POSTGRES_DB=${POSTGRES_DB}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-    env_file:
-      - ./.env.dev
-    ports:
-      - "5432:5432"
+      - POSTGRES_DB=ai4s_db
+      - POSTGRES_USER=ai4s_user
+      - POSTGRES_PASSWORD=a_strong_password_for_db
 
   # --- Nginx Web Server Service ("nginx") ---
   nginx:
