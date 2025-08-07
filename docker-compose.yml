@@ -25,9 +25,9 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     environment:
-      - POSTGRES_DB=${SQL_DATABASE}
-      - POSTGRES_USER=${SQL_USER}
-      - POSTGRES_PASSWORD=${SQL_PASSWORD}
+      - POSTGRES_DB=ai4s_db
+      - POSTGRES_USER=ai4s_user
+      - POSTGRES_PASSWORD=a_strong_password_for_db
     env_file:
       - ./.env.dev
 
