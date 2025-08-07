@@ -21,9 +21,14 @@
                 {% comment %} <a href="#" class="btn btn-secondary btn-lg">Learn More</a> {% endcomment %}
             </div>
         </div>
+        <!-- ########## START OF MODIFIED SECTION ########## -->
         <div class="hero-image animate-on-scroll delay-3">
-            <img src="{% static 'core/images/AI_Assessment_Illustration.png' %}" alt="AI Assessment Illustration">
+            <!-- This new container will handle the 3D perspective for the tilt effect -->
+            <div class="tilt-container">
+                <img src="{% static 'core/images/AI_Assessment_Illustration.png' %}" alt="AI Assessment Illustration" class="tilt-image">
+            </div>
         </div>
+        <!-- ########## END OF MODIFIED SECTION ########## -->
     </div>
 </section>
 

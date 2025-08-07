@@ -253,3 +253,28 @@
         font-size: 2.8rem;
     }
 }
+
+/* 1. The container that creates the 3D space.
+      It inherits its size from the parent .hero-image div. */
+.tilt-container {
+    perspective: 1000px; /* This enables the 3D perspective. */
+    transform-style: preserve-3d; /* Required for children to be in 3D space. */
+    border-radius: 20px;
+    overflow: hidden; /* Ensures a clean look. */
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    height: 100%;
+}
+
+/* 2. The image that will be transformed by the JavaScript. */
+.tilt-image {
+    width: 100%;
+    height: auto;
+    border-radius: 20px;
+    
+    /* This transition makes the image animate smoothly when the mouse moves. */
+    transition: transform 0.1s ease-out;
+
+    /* Start with no rotation. */
+    transform: rotateX(0deg) rotateY(0deg);
+}

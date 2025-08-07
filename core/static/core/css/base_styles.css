@@ -23,8 +23,8 @@ html[data-theme='dark'] {
 
 
 body {
-    background-color: #232b3a;
-    color: var(--text-color);
+    background-color: white;
+    color: #0f2c59;
     font-family: var(--font-primary);
     transition: background-color 0.3s, color 0.3s;
 }
@@ -56,7 +56,7 @@ body {
 .main-header {
     position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
     height: var(--header-height);
-    background-color: var(--surface-color);
+    background-color: #0f2c59;
     box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
     border-bottom: 1px solid var(--border-color);
     transition: all 0.3s ease;
