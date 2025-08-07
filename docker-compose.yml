@@ -1,3 +1,4 @@
+# docker-compose.yml (Final, Self-Contained Version for Local Development)
 
 services:
   # --- Django Application Service ("web") ---
@@ -11,14 +12,15 @@ services:
       - media_volume:/app/media
     expose:
       - 8000
-    # --- THIS IS THE FIX ---
-    # We define the environment variables directly here, removing the need for .env.dev.
+    # The environment variables for the Django application
     environment:
       - SECRET_KEY=django-insecure-a-local-dev-secret-key
       - DEBUG=1
       - ALLOWED_HOSTS=localhost,127.0.0.1
-      # This URL now uses the hardcoded credentials from the 'db' service below.
-      - DATABASE_URL=postgres://ai4s_user:Sachin@123@db:5432/ai4s_db
+      # --- THIS IS THE FIX ---
+      # This URL tells Django to connect to the 'db' container
+      # using the username 'ai4s_user' and password 'Password@123'.
+      - DATABASE_URL=postgres://ai4s_user:Password@123@db:5432/ai4s_db
     depends_on:
       - db
 
@@ -29,11 +31,13 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     # --- THIS IS THE CRITICAL FIX ---
-    # We are setting the database credentials directly for the PostgreSQL container.
+    # This tells the new PostgreSQL container:
+    # "When you start for the first time, create a database named 'ai4s_db',
+    # a user named 'ai4s_user', and set their password to 'Password@123'."
     environment:
       - POSTGRES_DB=ai4s_db
       - POSTGRES_USER=ai4s_user
-      - POSTGRES_PASSWORD=a_strong_password_for_db
+      - POSTGRES_PASSWORD=Password@123
 
   # --- Nginx Web Server Service ("nginx") ---
   nginx:
