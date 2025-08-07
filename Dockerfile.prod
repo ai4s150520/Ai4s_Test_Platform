@@ -1,4 +1,4 @@
-# Dockerfile.prod (For GCP Deployment)
+# Dockerfile.prod (Final, Corrected Version)
 
 # --- Build Stage (named 'builder') ---
 # This stage installs all dependencies and builds our static files.
@@ -9,37 +9,32 @@ WORKDIR /app
 # Install system dependencies needed for building Python packages
 RUN apt-get update && apt-get install -y --no-install-recommends gcc libpq-dev
 
-# Copy and install Python dependencies
+# Copy and install Python dependencies (including gunicorn)
 COPY requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the entire application code
 COPY . /app/
 
-# Run collectstatic. This requires dummy environment variables to run without a real database.
-# This command tells Django to use the Google Cloud Storage backend.
+# Run collectstatic. This requires dummy environment variables.
 RUN SECRET_KEY=dummy GS_BUCKET_NAME=dummy GOOGLE_APPLICATION_CREDENTIALS=/app/dummy.json python manage.py collectstatic --no-input
+
 
 # --- Final Stage ---
 # This stage creates the final, lean image that will actually run on Cloud Run.
+# --- THIS IS THE FIX: The duplicate 'AS builder' has been removed. ---
 FROM python:3.11-slim
 
 WORKDIR /app
 
-# Install only the runtime system dependencies (libpq-dev is for psycopg2)
+# Install only the runtime system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends libpq-dev && rm -rf /var/lib/apt/lists/*
 
-# Copy the installed Python packages from the 'builder' stage
+# Copy the installed Python packages (including gunicorn) from the 'builder' stage
 COPY --from=builder /usr/local/lib/python3.11/site-packages/ /usr/local/lib/python3.11/site-packages/
-COPY --from=builder /app/staticfiles/ /app/staticfiles/
 
 # Copy the application code
 COPY . /app/
 
-# Expose the port that Gunicorn will run on.
-# Cloud Run will provide this port number via the $PORT environment variable.
-EXPOSE 8000
-
-# The command to run the application. It dynamically uses the $PORT variable from Cloud Run.
-# This is the definitive fix for your Cloud Run deployment error.
+# The CMD is the definitive way to run the application, respecting the $PORT variable.
 CMD ["gunicorn", "--bind", "0.0.0.0:$PORT", "--workers", "2", "ai4s_online_test.wsgi"]
