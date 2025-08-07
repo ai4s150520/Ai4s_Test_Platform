@@ -145,6 +145,14 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [ BASE_DIR / "static", ]
+# This is where collectstatic will put all files for production
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+# Media files (User-uploaded content)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
 GS_BUCKET_NAME = config('GS_BUCKET_NAME', default=None)
 
 if GS_BUCKET_NAME:
@@ -155,12 +163,6 @@ if GS_BUCKET_NAME:
     MEDIA_URL = f'https://storage.googleapis.com/ai4s-prod-static-assets-final/media/'
     GS_DEFAULT_ACL = 'publicRead'
 else:
-    STATIC_URL = '/static/'
-    STATICFILES_DIRS = [ BASE_DIR / "static", ]
-# This is where collectstatic will put all files for production
-    STATIC_ROOT = BASE_DIR / 'staticfiles'
-# Media files (User-uploaded content)
-    MEDIA_URL = '/media/'
     MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type
