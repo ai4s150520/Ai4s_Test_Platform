@@ -1,24 +1,21 @@
-# docker-compose.yml (Simplified for Debugging)
+# docker-compose.yml (For Local Development ONLY)
 
 services:
   web:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile # Use the main Dockerfile for local dev
     container_name: django_web_app
+    # The command to run in development. Gunicorn will listen on port 8000.
     command: gunicorn ai4s_online_test.wsgi:application --bind 0.0.0.0:8000 --workers 4
     volumes:
-      - .:/app
+      - .:/app # Mount local code for instant changes
       - static_volume:/app/staticfiles
       - media_volume:/app/media
     expose:
       - 8000
-    # --- IMPORTANT CHANGE ---
-    # We now define the environment variables directly here.
-    environment:
-      - SECRET_KEY=a-local-dev-secret-key
-      - DEBUG=1
-      - ALLOWED_HOSTS=localhost,127.0.0.1,nginx
-      # This URL now uses the hardcoded values from the 'db' service below.
-      - DATABASE_URL=postgres://ai4s_user:a_strong_password_for_db@db:5432/ai4s_db
+    env_file:
+      - ./.env.dev
     depends_on:
       - db
 
@@ -27,13 +24,12 @@ services:
     container_name: postgres_database
     volumes:
       - postgres_data:/var/lib/postgresql/data/
-    # --- THIS IS THE CRITICAL FIX ---
-    # We are setting the database credentials directly.
-    # The PostgreSQL container will use these exact values to initialize itself.
     environment:
-      - POSTGRES_DB=ai4s_db
-      - POSTGRES_USER=ai4s_user
-      - POSTGRES_PASSWORD=a_strong_password_for_db
+      - POSTGRES_DB=${SQL_DATABASE}
+      - POSTGRES_USER=${SQL_USER}
+      - POSTGRES_PASSWORD=${SQL_PASSWORD}
+    env_file:
+      - ./.env.dev
 
   nginx:
     image: nginx:1.25

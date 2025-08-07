@@ -1,26 +1,26 @@
 #!/bin/sh
+# This script ensures the database is available before the Django app starts.
 
-# Exit immediately if a command exits with a non-zero status.
+# Exit immediately if a command fails.
 set -e
 
-# Define the database host and port. The name 'db' is what we will call
-# our PostgreSQL service in the docker-compose.yml file.
-DB_HOST="db"
-DB_PORT="5432"
+# Define the database host and port. These come from docker-compose.
+DB_HOST=${DB_HOST:-db}
+DB_PORT=${DB_PORT:-5432}
 
-echo "Waiting for PostgreSQL at $DB_HOST:$DB_PORT..."
+echo "Waiting for PostgreSQL database at $DB_HOST:$DB_PORT..."
 
 # Use netcat (nc) to poll the database port until it's available.
 while ! nc -z $DB_HOST $DB_PORT; do
-  sleep 0.1 # wait for 1/10 of a second before check again
+  echo "Database is unavailable - sleeping"
+  sleep 1
 done
 
-echo "PostgreSQL started successfully."
+echo "PostgreSQL is up and running."
 
-# Once the database is ready, apply any pending database migrations.
+# Run Django management commands
 echo "Applying database migrations..."
-python manage.py migrate
+python manage.py migrate --noinput
 
-# Now, execute the main command for the container. This will be the gunicorn
-# command that we pass in our docker-compose.yml file.
+# Execute the main command passed to the script (e.g., the gunicorn command from docker-compose)
 exec "$@"

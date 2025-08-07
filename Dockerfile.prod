@@ -1,43 +1,44 @@
-# Dockerfile.prod
+# Dockerfile.prod (For GCP Deployment)
 
-# --- Build Stage ---
-# This stage installs dependencies and builds static files.
-FROM python:3.11-slim as builder
+# --- Build Stage (named 'builder') ---
+# This stage installs all dependencies and builds our static files.
+FROM python:3.11-slim AS builder
 
 WORKDIR /app
 
-# Install system dependencies needed for building
+# Install system dependencies needed for building Python packages
 RUN apt-get update && apt-get install -y --no-install-recommends gcc libpq-dev
 
-# Install Python dependencies
+# Copy and install Python dependencies
 COPY requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy application code
+# Copy the entire application code
 COPY . /app/
 
-# Run collectstatic. This uses the GS_BUCKET_NAME from our settings.
-# We need to provide dummy secrets and a path to a dummy credentials file for this command to run during build.
-RUN SECRET_KEY=dummy \
-    GS_BUCKET_NAME=dummy \
-    GOOGLE_APPLICATION_CREDENTIALS=/app/dummy_creds.json \
-    python manage.py collectstatic --no-input
+# Run collectstatic. This requires dummy environment variables to run without a real database.
+# This command tells Django to use the Google Cloud Storage backend.
+RUN SECRET_KEY=dummy GS_BUCKET_NAME=dummy GOOGLE_APPLICATION_CREDENTIALS=/app/dummy.json python manage.py collectstatic --no-input
 
 # --- Final Stage ---
-# This stage creates the final, smaller image to run.
+# This stage creates the final, lean image that will actually run on Cloud Run.
 FROM python:3.11-slim
 
 WORKDIR /app
 
-# Install only the runtime system dependencies
+# Install only the runtime system dependencies (libpq-dev is for psycopg2)
 RUN apt-get update && apt-get install -y --no-install-recommends libpq-dev && rm -rf /var/lib/apt/lists/*
 
-# Copy installed Python packages from the builder stage
+# Copy the installed Python packages from the 'builder' stage
 COPY --from=builder /usr/local/lib/python3.11/site-packages/ /usr/local/lib/python3.11/site-packages/
 
 # Copy the application code
 COPY . /app/
 
-# Gunicorn will be run by Cloud Run's default command.
-# We just need to expose the port.
+# Expose the port that Gunicorn will run on.
+# Cloud Run will provide this port number via the $PORT environment variable.
 EXPOSE 8000
+
+# The command to run the application. It dynamically uses the $PORT variable from Cloud Run.
+# This is the definitive fix for your Cloud Run deployment error.
+CMD ["gunicorn", "--bind", "0.0.0.0:$PORT", "--workers", "2", "ai4s_online_test.wsgi"]

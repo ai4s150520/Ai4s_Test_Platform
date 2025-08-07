@@ -1,48 +1,14 @@
 # .dockerignore
-
-# --- Version Control ---
-# Exclude the entire Git history and configuration.
 .git
 .gitignore
-
-# --- Secrets & Environment Files ---
-# NEVER include secret keys, passwords, or credentials in your image.
-# These should be injected at runtime (e.g., via Cloud Run Secret Manager).
 .env
 .env.*
-*.pem
 gcp-credentials.json
-
-# --- Python & Virtual Environment ---
-# Exclude the local virtual environment folder.
+*.pem
 venv/
-# Exclude Python's compiled bytecode cache.
 __pycache__/
 *.pyc
-# Exclude local package installation folders (less common).
-.eggs/
-*.egg-info/
-
-# --- Docker & Development Files ---
-# Exclude the Docker files themselves from the build context.
 Dockerfile
-Dockerfile.*
+Dockerfile.prod
 docker-compose.yml
-docker-compose.*.yml
-.dockerignore
-
-# --- Local Development Database ---
-# Exclude the local SQLite database file.
 db.sqlite3
-db.sqlite3-journal
-
-# --- IDE & Editor Configuration ---
-# Exclude configuration folders from popular editors like VS Code.
-.vscode/
-.idea/
-
-# --- Static & Media Build Artifacts (Optional but good practice) ---
-# Exclude the folders where `collectstatic` and media files are stored locally.
-# The container will generate its own `staticfiles` directory.
-/staticfiles
-/media
