@@ -18,7 +18,7 @@ services:
       - DEBUG=1
       - ALLOWED_HOSTS=localhost,127.0.0.1
       # This URL now uses the hardcoded credentials from the 'db' service below.
-      - DATABASE_URL=postgres://ai4s_user:a_strong_password_for_db@db:5432/ai4s_db
+      - DATABASE_URL=postgres://ai4s_user:Sachin@123@db:5432/ai4s_db
     depends_on:
       - db
 
