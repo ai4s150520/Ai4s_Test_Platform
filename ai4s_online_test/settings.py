@@ -1,27 +1,30 @@
 """
 Django settings for ai4s_online_test project.
-Configured for both local Docker development and GCP production deployment.
+Configured for local development and PythonAnywhere deployment.
 """
 import os
 from pathlib import Path
-from decouple import config
-import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+
 # ==============================================================================
-# CORE DEPLOYMENT SETTINGS (Read from .env or environment variables)
+# CORE SETTINGS (with local development defaults)
+# These values will be overridden by local_settings.py in production.
 # ==============================================================================
 
-# SECRET_KEY is now read securely from your environment configuration.
-SECRET_KEY = config('django-insecure-zh9n64om@@*e9qui7gpyq_%el^lkob0w3zllq@jbc40l!dm!-a')
+# This is a safe, non-secret key for DEVELOPMENT ONLY.
+# The REAL production key MUST be in your local_settings.py file on the server.
+SECRET_KEY = "django-insecure-zh9n64om@@*e9qui7gpyq_%el^lkob0w3zllq@jbc40l!dm!-a"
 
-# DEBUG is read from the environment. CRITICAL: This must be False in production.
-DEBUG = config('DEBUG', default=False, cast=bool)
+# DEBUG is True for local development to see detailed error pages.
+# It MUST be set to False in local_settings.py for production.
+DEBUG = True
 
-# ALLOWED_HOSTS is a comma-separated string in your environment config.
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='127.0.0.1,localhost').split(',')
+# For local development, this can be empty or ['127.0.0.1', 'localhost'].
+# It MUST be set to your domain in local_settings.py for production.
+ALLOWED_HOSTS = []
 
 
 # ==============================================================================
@@ -35,9 +38,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # Third-party apps
     'imagekit',
     'rest_framework',
-    'storages',
+    # 'storages', # Not needed for PythonAnywhere's local file storage
+
+    # Your apps
     'core',
     'users',
 ]
@@ -56,8 +63,8 @@ ROOT_URLCONF = 'ai4s_online_test.urls'
 
 # --- User Authentication URLs ---
 LOGIN_URL = 'users:login_register'
-LOGIN_REDIRECT_URL = 'core:dashboard' # Use URL names for robustness
-LOGOUT_REDIRECT_URL = 'core:home'      # Use URL names
+LOGIN_REDIRECT_URL = 'core:dashboard'
+LOGOUT_REDIRECT_URL = 'core:home'
 
 TEMPLATES = [
     {
@@ -77,24 +84,24 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'ai4s_online_test.wsgi.application'
 
+
 # ==============================================================================
 # DATABASE CONFIGURATION
 # ==============================================================================
-DATABASE_URL_FROM_ENV = config('DATABASE_URL', default='')
+# By default, we will use a simple SQLite database for local development.
+# The local_settings.py file will override this with the MySQL configuration for production.
 DATABASES = {
-    'default': dj_database_url.config(
-        default=DATABASE_URL_FROM_ENV,
-        conn_max_age=600
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 }
-# Safety net for the Docker build process
-if not DATABASES['default'].get('ENGINE'):
-    DATABASES['default'] = {'ENGINE': 'django.db.backends.sqlite3', 'NAME': ':memory:'}
+
 
 # --- User Model ---
 AUTH_USER_MODEL = 'users.CustomUser'
 
-# --- Password Validation --- (No changes needed)
+# --- Password Validation ---
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -110,7 +117,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# --- Internationalization --- (No changes needed)
+# --- Internationalization ---
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
@@ -118,37 +125,30 @@ USE_TZ = True
 
 
 # ==============================================================================
-# STATIC & MEDIA FILES CONFIGURATION (Corrected and Final)
+# STATIC & MEDIA FILES CONFIGURATION (for PythonAnywhere)
 # ==============================================================================
-
-# --- Base Static Settings (Applied in ALL environments) ---
+# URL to use when referring to static files.
 STATIC_URL = '/static/'
+# The directory where `collectstatic` will gather all static files from all apps.
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_DIRS = [ BASE_DIR / "static" ]
+# We do not need STATICFILES_DIRS if all static files are inside their respective apps.
+
+# URL that handles user-uploaded media files.
 MEDIA_URL = '/media/'
+# The directory where user-uploaded media files will be stored.
+MEDIA_ROOT = BASE_DIR / 'media'
 
-# --- Environment-Specific Storage Configuration ---
-GS_BUCKET_NAME = config('GS_BUCKET_NAME', default=None)
-
-if GS_BUCKET_NAME:
-    # --- Production Settings (Google Cloud Storage) ---
-    STATICFILES_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
-    DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
-    
-    # Overwrite STATIC_URL and MEDIA_URL to point to the GCS bucket.
-    # The URL is constructed dynamically from the bucket name.
-    STATIC_URL = f'https://storage.googleapis.com/{GS_BUCKET_NAME}/static/'
-    MEDIA_URL = f'https://storage.googleapis.com/{GS_BUCKET_NAME}/media/'
-    
-    GS_DEFAULT_ACL = 'publicRead'
-else:
-    # --- Local Development Settings (Docker) ---
-    # MEDIA_ROOT is only needed for local development.
-    MEDIA_ROOT = BASE_DIR / 'media'
 
 # --- Default primary key field type ---
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+
+# ==============================================================================
+# LOCAL SETTINGS OVERRIDE (CRITICAL FOR PRODUCTION)
+# ==============================================================================
+# This will try to import all settings from a local_settings.py file.
+# This file should exist ONLY on the production server (PythonAnywhere) and
+# should be in your .gitignore file.
 try:
     from .local_settings import *
 except ImportError:
