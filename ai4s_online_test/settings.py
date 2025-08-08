@@ -15,7 +15,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # ==============================================================================
 
 # SECRET_KEY is now read securely from your environment configuration.
-SECRET_KEY = config('SECRET_KEY')
+SECRET_KEY = config('django-insecure-zh9n64om@@*e9qui7gpyq_%el^lkob0w3zllq@jbc40l!dm!-a')
 
 # DEBUG is read from the environment. CRITICAL: This must be False in production.
 DEBUG = config('DEBUG', default=False, cast=bool)
