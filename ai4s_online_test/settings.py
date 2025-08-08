@@ -44,9 +44,9 @@ INSTALLED_APPS = [
     'rest_framework',
     # 'storages', # Not needed for PythonAnywhere's local file storage
 
-    # Your apps
-    'core',
-    'users',
+    # # Your apps
+    # 'core',
+    # 'users',
     
     'core.apps.CoreConfig', # Or just 'core'
     'users.apps.UsersConfig',
